@@ -2,6 +2,7 @@ using System.Data;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PortfolioService.Infrastructure;
@@ -18,6 +19,33 @@ public sealed class TradeAndSnapshotFlowTests(PortfolioApiFactory factory) : ICl
         using var scope = factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<PortfolioDbContext>();
         Assert.False(dbContext.Database.HasPendingModelChanges());
+    }
+
+    [Fact]
+    public async Task RootRedirectsToInteractiveOpenApiDocumentation()
+    {
+        using var noRedirectClient = factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false,
+        });
+
+        using var rootResponse = await noRedirectClient.GetAsync("/");
+        Assert.Equal(HttpStatusCode.Redirect, rootResponse.StatusCode);
+        Assert.Equal("/swagger/index.html", rootResponse.Headers.Location?.OriginalString);
+
+        using var uiResponse = await _client.GetAsync("/swagger/index.html");
+        uiResponse.EnsureSuccessStatusCode();
+        var ui = await uiResponse.Content.ReadAsStringAsync();
+        Assert.Contains("Sygnia Portfolio Service API", ui, StringComparison.Ordinal);
+
+        using var documentResponse = await _client.GetAsync("/swagger/v1/swagger.json");
+        documentResponse.EnsureSuccessStatusCode();
+        using var document = await ReadJsonAsync(documentResponse);
+        var paths = document.RootElement.GetProperty("paths");
+        Assert.True(paths.TryGetProperty("/api/v1/trades", out _));
+        Assert.True(paths.TryGetProperty(
+            "/api/v1/portfolios/{accountId}/snapshots/{valuationDate}",
+            out _));
     }
 
     [Fact]

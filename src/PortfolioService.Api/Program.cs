@@ -28,6 +28,8 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower));
 });
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<PortfolioDbContext>(options =>
     options.UseSqlServer(connectionString, sql =>
         sql.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null)));
@@ -54,7 +56,15 @@ if (app.Services.GetRequiredService<IOptions<DatabaseInitializationOptions>>().V
 
 app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseExceptionHandler();
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+    options.DocumentTitle = "Sygnia Portfolio Service API";
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Sygnia Portfolio Service v1");
+});
 app.MapControllers();
+app.MapGet("/", () => Results.Redirect("/swagger/index.html"))
+    .ExcludeFromDescription();
 app.MapGet("/health/live", () => Results.Ok(new { status = "live" }));
 app.MapGet("/health/ready", async (PortfolioDbContext dbContext, CancellationToken cancellationToken) =>
 {

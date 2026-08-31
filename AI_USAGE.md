@@ -21,6 +21,7 @@ The work was completed in one interactive Codex session rather than through sepa
 5. Add operational logging, correlation IDs, health checks, problem responses, and a correction rollout switch.
 6. Test the complete flow against real SQL Server, including concurrency and the SQL artifact.
 7. Produce reviewer-facing run instructions, design notes, a demo script, and this AI disclosure.
+8. Add interactive Swagger/OpenAPI documentation for browser-based assessment review, test it, and republish the verified change.
 
 ## Human judgment and validation
 

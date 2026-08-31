@@ -74,6 +74,7 @@ For very large history, partition `TradeEvents` by a time column aligned with th
 
 Operational behavior includes:
 
+- interactive Swagger/OpenAPI documentation, with the service root redirecting to it;
 - source-generated structured log events for accepted, duplicate, stale, corrected, disabled, and snapshot outcomes;
 - caller-supplied or generated correlation IDs in a logging scope and response header;
 - centralized RFC 7807 problem responses with stable machine-readable codes and trace IDs;
@@ -122,4 +123,4 @@ The safest modernization seam is the API/database contract, not a shared impleme
 
 ## Deliberate omissions and next steps
 
-The assignment’s optional UI, FX, and cash features were not implemented. The next increments would be authentication, OpenAPI documentation, cancel/rebook event types, richer cost-basis rules, price ingestion, and a real feature-management provider. These are more valuable after the required event semantics and operational behavior are proven.
+The assignment’s optional business UI, FX, and cash features were not implemented. The next increments would be authentication, cancel/rebook event types, richer cost-basis rules, price ingestion, and a real feature-management provider. These are more valuable after the required event semantics and operational behavior are proven.

@@ -18,7 +18,7 @@ dotnet run --project .\src\PortfolioService.Api -- --migrate-only
 dotnet run --project .\src\PortfolioService.Api
 ```
 
-The API listens on `http://localhost:5180`. In another terminal, run the complete assessment scenario:
+The API listens on `http://localhost:5180`. Opening that address in a browser redirects to interactive Swagger documentation, where every endpoint and schema can be inspected and exercised. In another terminal, run the complete assessment scenario:
 
 ```powershell
 .\scripts\demo.ps1
@@ -34,7 +34,7 @@ The demo uses a unique account and verifies:
 
 ## Verify the submission
 
-The one-command verification builds with warnings as errors and runs five integration tests against temporary SQL Server databases:
+The one-command verification builds with warnings as errors and runs six integration tests against temporary SQL Server databases:
 
 ```powershell
 .\scripts\verify.ps1
@@ -47,7 +47,7 @@ dotnet build .\Sygnia.PortfolioService.sln --configuration Release
 dotnet test .\tests\PortfolioService.IntegrationTests --configuration Release
 ```
 
-The tests cover migration/model consistency, the full API flow, eight concurrent resends, SQL procedure as-of behavior, and correction disablement. Test databases are deleted after the run.
+The tests cover migration/model consistency, the Swagger experience, the full API flow, eight concurrent resends, SQL procedure as-of behavior, and correction disablement. Test databases are deleted after the run.
 
 For a non-LocalDB SQL Server, give the test login database create/drop permission and set a connection-string template. The fixture replaces its database name with a unique value:
 
@@ -60,6 +60,7 @@ dotnet test .\tests\PortfolioService.IntegrationTests
 
 | Method | Route | Purpose |
 | --- | --- | --- |
+| `GET` | `/` | Redirect to the interactive Swagger UI |
 | `POST` | `/api/v1/trades` | Accept an initial event or later correction; safely ignore a resend |
 | `GET` | `/api/v1/trades/{external_ref}/events` | Retrieve the immutable accepted-event audit trail |
 | `GET` | `/api/v1/portfolios/{account_id}/snapshots/{yyyy-MM-dd}` | Get positions, valuation, and account totals in USD |
