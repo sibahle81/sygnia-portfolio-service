@@ -1,0 +1,22 @@
+## Build outputs
+bin/
+obj/
+TestResults/
+artifacts/
+
+## IDE and user-specific files
+.vs/
+.vscode/
+*.user
+*.suo
+
+## Local configuration and secrets
+appsettings.Local.json
+.env
+
+## Temporary working files
+tmp/
+
+## OS files
+.DS_Store
+Thumbs.db

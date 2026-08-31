@@ -1,0 +1,58 @@
+@baseUrl = http://localhost:5180
+@externalRef = TRX-1001
+@accountId = ACC-001
+
+### Initial trade
+POST {{baseUrl}}/api/v1/trades
+Content-Type: application/json
+X-Correlation-ID: assessment-demo
+
+{
+  "external_ref": "{{externalRef}}",
+  "account_id": "{{accountId}}",
+  "instrument": { "isin": "US0378331005" },
+  "side": "BUY",
+  "quantity": 120,
+  "price": 185.40,
+  "trade_date": "2025-03-01",
+  "as_of": "2025-03-01T10:15:00Z"
+}
+
+### Exact duplicate - repeat after initial trade
+POST {{baseUrl}}/api/v1/trades
+Content-Type: application/json
+
+{
+  "external_ref": "{{externalRef}}",
+  "account_id": "{{accountId}}",
+  "instrument": { "isin": "US0378331005" },
+  "side": "BUY",
+  "quantity": 120,
+  "price": 185.40,
+  "trade_date": "2025-03-01",
+  "as_of": "2025-03-01T10:15:00Z"
+}
+
+### Later correction
+POST {{baseUrl}}/api/v1/trades
+Content-Type: application/json
+
+{
+  "external_ref": "{{externalRef}}",
+  "account_id": "{{accountId}}",
+  "instrument": { "isin": "US0378331005" },
+  "side": "BUY",
+  "quantity": 100,
+  "price": 184.00,
+  "trade_date": "2025-03-01",
+  "as_of": "2025-03-01T11:00:00Z"
+}
+
+### Accepted-event audit trail
+GET {{baseUrl}}/api/v1/trades/{{externalRef}}/events
+
+### Corrected USD snapshot
+GET {{baseUrl}}/api/v1/portfolios/{{accountId}}/snapshots/2025-03-01
+
+### Readiness
+GET {{baseUrl}}/health/ready
